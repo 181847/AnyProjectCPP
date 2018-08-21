@@ -12,6 +12,12 @@ extern "C"
 namespace App
 {
 
+HWND ConsoleHwnd = 0;
+HWND NativeHwnd = 0;
+bool IsNativeWindowHiden = false;
+bool ToBeHiden = false;
+bool NextBeHiden = false;
+
 unsigned int MainWindowWidth = 720;
 unsigned int MainWindowHeight = 720;
 char StatusText[255];
@@ -27,7 +33,11 @@ public:
         {
             luaL_openlibs(MainLuaState);
         }
-        
+
+        if (luaL_dofile(MainLuaState, "initialize.lua"))
+        {
+            sprintf_s(StatusText, "do file failed");
+        }
     }
     MinimalLuaInpterpreter(const MinimalLuaInpterpreter&) = delete;
     MinimalLuaInpterpreter(const MinimalLuaInpterpreter&&) = delete;
@@ -58,10 +68,76 @@ public:
             return 1;
         }
 
+        sprintf_s(StatusText, "");
         return 0;
     }
 };
 
+void HideConsoleWindow()
+{
+    ShowWindow(ConsoleHwnd, SW_HIDE);
+}
+
+void HideNativeWindow()
+{
+    ImGui::GetIO().InputCharacters[0] = 0;
+    if (IsNativeWindowHiden)
+    {
+        return;
+    }
+
+    IsNativeWindowHiden = true;
+    // hide current window
+    ShowWindow(NativeHwnd, SW_HIDE);
+
+    // focus on the last window.
+    HWND nextWnd = GetWindow(NativeHwnd, GW_HWNDNEXT);
+
+    while (true)
+    {
+        HWND temp = GetParent(nextWnd);
+        if (temp == 0) break;
+        nextWnd = temp;
+    }
+
+    //SetFocus(hwndc);
+    SetForegroundWindow(nextWnd);
+    SetCapture(nextWnd);
+    SetFocus(nextWnd);
+    SetActiveWindow(nextWnd);
+    EnableWindow(nextWnd, TRUE);
+}
+
+void ShowNativeWindow()
+{
+    if (IsNativeWindowHiden == false)
+    {
+        return;
+    }
+
+    IsNativeWindowHiden = false;
+    // show this window
+    ShowWindow(NativeHwnd, SW_NORMAL);
+    //SetFocus(hwnd);
+    SetActiveWindow(NativeHwnd);
+    SetForegroundWindow(NativeHwnd);
+    SetCapture(NativeHwnd);
+    SetFocus(NativeHwnd);
+    SetActiveWindow(NativeHwnd);
+    EnableWindow(NativeHwnd, TRUE);
+}
+
+void ToggleNativeWindow()
+{
+    if (IsNativeWindowHiden)
+    {
+        ShowNativeWindow();
+    }
+    else
+    {
+        HideNativeWindow();
+    }
+}
 
 int EditTextCallBack(ImGuiTextEditCallbackData* data)
 {
@@ -87,12 +163,17 @@ int Main()
     ImGui::SetNextWindowSize(ImVec2(static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight)));
     ImGui::Begin("Hello, world!", &show_app_main_window/* indicating no close */, mainAppWndFlags);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    static char InputBuf[255];
-    ImGui::SetKeyboardFocusHere();
-    if (ImGui::InputText("input your text", InputBuf, sizeof(InputBuf), 0, EditTextCallBack))
+    static char InputBuf[255];     if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive())    {        ImGui::SetKeyboardFocusHere();    }
+    ImGui::InputText("input your text", InputBuf, sizeof(InputBuf));
+
+    if (ImGui::IsKeyReleased(VK_RETURN))
     {
         printf("deal with input: %s\n", InputBuf);
-        LuaInterpreter.DoCommand(InputBuf);
+        if (InputBuf[0] != '\0')
+        {
+            LuaInterpreter.DoCommand(InputBuf);
+            App::HideNativeWindow();
+        }
     }
     ImGui::Text(StatusText);
     ImGui::End();

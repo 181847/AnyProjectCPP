@@ -97,6 +97,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
             return 0;
         break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
@@ -122,6 +123,12 @@ int main(int, char**)
         UnregisterClass(_T("ImGui Example"), wc.hInstance);
         return 1;
     }
+
+    // register hot key
+    RegisterHotKey(NULL, 1, MOD_CONTROL, VK_BACK);
+    App::ConsoleHwnd = GetConsoleWindow();
+    App::NativeHwnd = hwnd;
+    App::HideConsoleWindow();
 
     // Show the window
     ShowWindow(hwnd, SW_SHOWDEFAULT);
@@ -167,12 +174,16 @@ int main(int, char**)
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+
         if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
             continue;
         }
+
+        if (msg.message == WM_HOTKEY)
+            App::ShowNativeWindow();
 
         // Start the Dear ImGui frame
         ImGui_ImplDX11_NewFrame();
@@ -194,6 +205,8 @@ int main(int, char**)
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
+
+    UnregisterHotKey(hwnd, 1);
 
     CleanupDeviceD3D();
     DestroyWindow(hwnd);
