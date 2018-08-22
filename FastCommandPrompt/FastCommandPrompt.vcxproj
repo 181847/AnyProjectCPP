@@ -160,6 +160,7 @@
     <ClCompile Include="..\..\Library\imgui\imgui_draw.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="FastCommandPrompt.cpp" />
+    <ClCompile Include="ImguiWrapImageDX11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Library\imgui\examples\imgui_impl_dx11.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="..\..\Library\Lua\Lua-5.3.4\src\lvm.h" />
     <ClInclude Include="..\..\Library\Lua\Lua-5.3.4\src\lzio.h" />
     <ClInclude Include="App.h" />
+    <ClInclude Include="ImguiWrapImageDX11.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\..\Library\imgui\misc\natvis\imgui.natvis" />

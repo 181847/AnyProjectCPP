@@ -42,6 +42,9 @@
     <ClCompile Include="App.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ImguiWrapImageDX11.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Library\imgui\imconfig.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Library\Lua\Lua-5.3.4\src\lzio.h">
       <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiWrapImageDX11.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
