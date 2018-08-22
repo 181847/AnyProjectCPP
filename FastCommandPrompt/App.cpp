@@ -163,7 +163,11 @@ int Main()
     ImGui::SetNextWindowSize(ImVec2(static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight)));
     ImGui::Begin("Hello, world!", &show_app_main_window/* indicating no close */, mainAppWndFlags);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    static char InputBuf[255];     if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive())    {        ImGui::SetKeyboardFocusHere();    }
+    static char InputBuf[255]; 
+    if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive())
+    {
+        ImGui::SetKeyboardFocusHere();
+    }
     ImGui::InputText("input your text", InputBuf, sizeof(InputBuf));
 
     if (ImGui::IsKeyReleased(VK_RETURN))
@@ -176,7 +180,6 @@ int Main()
         }
     }
     ImGui::Text(StatusText);
-    ImGui::End();
 
     return 0;
 }
