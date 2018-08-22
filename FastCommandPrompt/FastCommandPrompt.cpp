@@ -8,6 +8,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <tchar.h>
+#include "ImguiWrapImageDX11.h"
 
 #include "App.h"
 
@@ -124,6 +125,7 @@ int main(int, char**)
         return 1;
     }
 
+
     // register hot key
     RegisterHotKey(NULL, 1, MOD_CONTROL, VK_BACK);
     App::ConsoleHwnd = GetConsoleWindow();
@@ -142,6 +144,13 @@ int main(int, char**)
 
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+
+    unsigned int WIDTH = 41, HEIGHT = 41;
+    unsigned char *pRawImage = reinterpret_cast<unsigned char*>(malloc(4 * WIDTH * HEIGHT));
+    ImguiWrapImageDX11 image;
+    image.SetImageRawData(g_pd3dDevice, pRawImage, WIDTH, HEIGHT);
+    free(pRawImage);
 
     // Setup style
     ImGui::StyleColorsDark();
@@ -191,6 +200,8 @@ int main(int, char**)
         ImGui::NewFrame();
 
         App::Main();
+        ImGui::Image(image.GetSRV(), ImVec2(100, 50));
+        ImGui::End();
 
         // Rendering
         ImGui::Render();
