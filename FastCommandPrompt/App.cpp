@@ -3,11 +3,10 @@
 
 extern "C"
 {
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
+#include <Lua/Lua-5.3.4/src/lua.h>
+#include <Lua/Lua-5.3.4/src/lauxlib.h>
+#include <Lua/Lua-5.3.4/src/lualib.h>
 }
-#pragma comment(lib, "lua.lib")
 
 namespace App
 {

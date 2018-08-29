@@ -1,9 +1,9 @@
 ﻿// ImGui - standalone example application for DirectX 11
 // If you are new to ImGui, see examples/README.txt and documentation at the top of imgui.cpp.
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
+#include <imgui/imgui.h>
+#include <imgui/examples/imgui_impl_win32.h>
+#include <imgui/examples/imgui_impl_dx11.h>
 #include <d3d11.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -130,7 +130,7 @@ int main(int, char**)
     RegisterHotKey(NULL, 1, MOD_CONTROL, VK_BACK);
     App::ConsoleHwnd = GetConsoleWindow();
     App::NativeHwnd = hwnd;
-    App::HideConsoleWindow();
+    //App::HideConsoleWindow();
 
     // Show the window
     ShowWindow(hwnd, SW_SHOWDEFAULT);
