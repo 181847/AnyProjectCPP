@@ -1,5 +1,7 @@
 #include "App.h"
 #include <stdio.h>
+#include <vector>
+#include <string>
 
 extern "C"
 {
@@ -33,9 +35,30 @@ public:
             luaL_openlibs(MainLuaState);
         }
 
-        if (luaL_dofile(MainLuaState, "initialize.lua"))
+        std::vector<std::string> readyInitScripts;
+        readyInitScripts.push_back("initialize.lua");
+        readyInitScripts.push_back("../initialize.lua");
+        bool isInitSuccess = false;
+        // loop all init scripts until success one.
+        for (const auto& initScript : readyInitScripts)
+        {
+            printf("try init with %s\n", initScript.c_str());
+            isInitSuccess = ! (luaL_dofile(MainLuaState, initScript.c_str()));
+            if (isInitSuccess)
+            {
+                isInitSuccess = true;
+                break;
+            }
+        }
+        
+        if (isInitSuccess)
+        {
+            printf("lua initialize success\n");
+        }
+        else
         {
             sprintf_s(StatusText, "do file failed");
+            printf("load init script failed.!");
         }
     }
     MinimalLuaInpterpreter(const MinimalLuaInpterpreter&) = delete;
@@ -61,9 +84,12 @@ public:
 
         lua_setglobal(MainLuaState, "command");
 
-        if (luaL_dofile(MainLuaState, "controller.lua"))
+        
+        if (luaL_dostring(MainLuaState, "CallController();"))
         {
-            sprintf_s(StatusText, "do file failed");
+            const char * errorMessage = lua_tostring(MainLuaState, -1);
+            sprintf_s(StatusText, "do file failed %s", errorMessage);
+            printf("DoCommand failed: %s\n", errorMessage);
             return 1;
         }
 
