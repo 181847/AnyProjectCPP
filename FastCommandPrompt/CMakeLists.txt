@@ -21,4 +21,18 @@ find_library(LUA_LIB
 target_link_libraries(FastCommandPrompt ${LUA_LIB})
 target_include_directories(FastCommandPrompt PRIVATE ${MY_LIBRARY_PATH}/imgui)
 
+# copy needed scripts to the output path of FastCommandPrompt
+get_target_property(
+	CONST_FAST_COMMAND_PROMPT_OUTPUT_PATH
+	FastCommandPrompt
+	RUNTIME_OUTPUT_DIRECTORY
+	)
+message(STATUS "the output path of " ${FastCommandPrompt} " is " ${CONST_FAST_COMMAND_PROMPT_OUTPUT_PATH})
+message(STATUS " build type is  " ${CMAKE_BUILD_TYPE})
+
+file(
+	COPY initialize.lua controller.lua clipboard.dll
+	DESTINATION ${CONST_FAST_COMMAND_PROMPT_OUTPUT_PATH}
+)
+
 message(STATUS "source files = " "${FAST_COMMAND_PROMPT_SOURCE_FILES}")
